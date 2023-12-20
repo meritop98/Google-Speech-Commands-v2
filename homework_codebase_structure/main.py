@@ -16,7 +16,7 @@ from feature import FeatureMappings
 prep = Preprocessing()  #creates preprocessing object
 feature_instance = FeatureMappings(prep) #created feature object using the prep instance
 train_dataset, val_dataset, test_dataset = prep.create_iterators()  # makes datasets
-input_shape = (20,800)
+input_shape = (32, 16000)
 num_classes = 35
 network = My_Model(input_shape,num_classes)  #creates a tf.keras.Model
 

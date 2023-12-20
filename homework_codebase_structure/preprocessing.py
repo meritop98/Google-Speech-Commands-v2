@@ -63,12 +63,11 @@ class Preprocessing:
     #     label = file_path.split(os.sep)[0]
     #     return label
     def get_label(self, file_path):
-        # Using TensorFlow's string split function
         parts = tf.strings.split(file_path, os.sep)
-        # The label is assumed to be the first part after the split
-        # Here, tf.strings.split returns a RaggedTensor, so we get the first item from it
         label = parts[0]
-        return label
+        label_id = tf.argmax(tf.cast(tf.equal(self.commands, label), dtype=tf.int32))
+        one_hot_label = tf.one_hot(label_id, depth=self.num_classes)
+        return one_hot_label
 
     def make_tf_dataset_from_list(self, filenames_list, is_validation = False):
         """

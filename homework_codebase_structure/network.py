@@ -16,22 +16,31 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 
+
 class My_Model(tf.keras.Model):
     def __init__(self, input_shape, num_classes):
         super(My_Model, self).__init__()
-        self.reshape = tf.keras.layers.Reshape((100, 160), input_shape=input_shape)
 
-        self.lstm1 = LSTM(128, return_sequences=True, input_shape=input_shape)
-        self.dropout1 = Dropout(config['model_params']['dropout'])
-        self.lstm2 = LSTM(128)
-        self.dropout2 = Dropout(config['model_params']['dropout'])
-        self.dense = Dense(num_classes, activation='softmax')
+        # Define the input layer based on the input shape
+        self.input_layer = tf.keras.layers.InputLayer(input_shape=input_shape)
 
-    def call(self, inputs):
-        x = self.reshape(inputs)
+        # Add LSTM layers for sequence processing
+        self.lstm_layer1 = tf.keras.layers.LSTM(64, return_sequences=True)
+        self.lstm_layer2 = tf.keras.layers.LSTM(32)
 
-        x = self.lstm1(x)
-        x = self.dropout1(x)
-        x = self.lstm2(x)
-        x = self.dropout2(x)
-        return self.dense(x)
+        # Add a dense layer for classification
+        self.output_layer = tf.keras.layers.Dense(num_classes, activation='softmax')
+
+    def call(self, inputs, **kwargs):
+        # Define the forward pass of your model using the layers defined in __init__
+        x = self.input_layer(inputs)
+        x = tf.keras.layers.Reshape((32, 500))(x)
+
+        # LSTM layers for sequence processing
+        x = self.lstm_layer1(x)
+        x = self.lstm_layer2(x)
+
+        # Output layer for classification
+        output = self.output_layer(x)
+        return output
+
